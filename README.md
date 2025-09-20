@@ -13,14 +13,16 @@ A modern web application that uses AI to parse receipts and split bills among fr
 ## Tech Stack
 
 ### Backend
+
 - **FastAPI**: Modern Python web framework
 - **SQLite**: Lightweight database for storing bill data
 - **Cerebras AI**: Primary API for receipt parsing
-- **Google Gemini**: Fallback vision API for receipt parsing
+- **Google Gemini**: Vision API for receipt parsing
 - **Pillow**: Image processing
 - **QRCode**: Generate payment QR codes
 
 ### Frontend
+
 - **React 18**: Modern React with hooks
 - **React Router**: Client-side routing
 - **Tailwind CSS**: Utility-first CSS framework
@@ -30,6 +32,7 @@ A modern web application that uses AI to parse receipts and split bills among fr
 ## Quick Start
 
 ### Prerequisites
+
 - Python 3.8+
 - Node.js 16+ (see installation instructions below)
 - npm (comes with Node.js)
@@ -37,12 +40,14 @@ A modern web application that uses AI to parse receipts and split bills among fr
 ### Installing Node.js
 
 **Option 1: Download from official website (Recommended)**
+
 1. Go to https://nodejs.org/
 2. Download the LTS version (Long Term Support)
 3. Run the installer and follow the instructions
 4. Verify installation: `node --version` and `npm --version`
 
 **Option 2: Using a package manager**
+
 - **Windows (with Chocolatey)**: `choco install nodejs`
 - **Windows (with Winget)**: `winget install OpenJS.NodeJS`
 - **macOS (with Homebrew)**: `brew install node`
@@ -52,34 +57,40 @@ A modern web application that uses AI to parse receipts and split bills among fr
 ### Backend Setup
 
 1. Navigate to the backend directory:
+
 ```bash
 cd backend
 ```
 
 2. Create a virtual environment:
+
 ```bash
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
 
 3. Install dependencies:
+
 ```bash
 pip install -r requirements.txt
 ```
 
 4. Set up environment variables:
+
 ```bash
 cp env_example.txt .env
 # Edit .env and add your API keys
 ```
 
 **API Keys Setup:**
+
 - **Cerebras API Key (Required)**: Get from https://cerebras.ai
 - **Gemini API Key (Required)**: Get from https://aistudio.google.com/app/apikey
   - Used as fallback when Cerebras fails
   - Gemini has excellent vision capabilities for receipt parsing
 
 5. Run the backend server:
+
 ```bash
 python main.py
 ```
@@ -89,16 +100,19 @@ The API will be available at `http://localhost:8000`
 ### Frontend Setup
 
 1. Navigate to the frontend directory:
+
 ```bash
 cd frontend
 ```
 
 2. Install dependencies:
+
 ```bash
 npm install
 ```
 
 3. Start the development server:
+
 ```bash
 npm run dev
 ```
@@ -123,6 +137,7 @@ The app will be available at `http://localhost:5173`
 ## Development
 
 ### Project Structure
+
 ```
 bill-splitter-app/
 ├── backend/
@@ -148,16 +163,19 @@ bill-splitter-app/
 #### React Components (for Java developers)
 
 **Components** are like Java classes that represent UI elements. They can have:
+
 - **State**: Internal data that can change (like instance variables)
 - **Props**: Data passed from parent components (like constructor parameters)
 - **Lifecycle methods**: Functions that run at specific times (like constructors/destructors)
 
 **Hooks** are special functions that let you use state and lifecycle features in functional components:
+
 - `useState`: Manages component state
 - `useEffect`: Runs code when component mounts or updates
 - `useNavigate`: Programmatic navigation (like redirects)
 
 **JSX** is like a template language that looks like HTML but is actually JavaScript:
+
 ```jsx
 // This JSX:
 <div className="container">
@@ -168,6 +186,7 @@ bill-splitter-app/
 ```
 
 **Event Handling** is similar to Java event listeners:
+
 ```jsx
 // Button click handler
 <button onClick={() => handleClick()}>Click me</button>

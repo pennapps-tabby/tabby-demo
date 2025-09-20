@@ -2,15 +2,16 @@ import qrcode
 import io
 import base64
 from typing import Dict, List
+from models import ItemAssignment
 
-def calculate_splits(bill_data: Dict, assignments: List[Dict], people: List[str]) -> Dict[str, float]:
+def calculate_splits(bill_data: Dict, assignments: List[ItemAssignment], people: List[str]) -> Dict[str, float]:
     """Calculate how much each person owes based on item assignments"""
     splits = {person: 0.0 for person in people}
     
     # Calculate proportional splits for each item
     for assignment in assignments:
-        item_id = assignment['item_id']
-        assigned_people = assignment['assigned_to']
+        item_id = assignment.item_id
+        assigned_people = assignment.assigned_to
         
         if item_id < len(bill_data['items']):
             item = bill_data['items'][item_id]

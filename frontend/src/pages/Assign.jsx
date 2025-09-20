@@ -25,6 +25,9 @@ function Assign() {
 
     if (billId) {
       fetchBill()
+    } else {
+      // If there's no billId, we can't proceed.
+      setLoading(false)
     }
   }, [billId, navigate])
 
@@ -40,10 +43,18 @@ function Assign() {
     )
   }
 
+  if (!bill) {
+    return (
+      <div className="text-center text-red-500">
+        Could not load bill data. Please return to the home page.
+      </div>
+    )
+  }
+
   return (
     <div>
       <h1 className="text-2xl font-bold text-gray-900 mb-6">Assign Items</h1>
-      <ItemAssignment bill={bill} onComplete={handleComplete} />
+      <ItemAssignment bill={bill} billId={billId} onComplete={handleComplete} />
     </div>
   )
 }

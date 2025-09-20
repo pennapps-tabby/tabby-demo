@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import api from '../services/api'
 
-function ItemAssignment({ bill, onComplete }) {
+function ItemAssignment({ bill, billId, onComplete }) {
   const [people, setPeople] = useState([''])
   const [assignments, setAssignments] = useState({})
   const [splits, setSplits] = useState({})
@@ -53,6 +53,7 @@ function ItemAssignment({ bill, onComplete }) {
   }
 
   const calculateSplits = async () => {
+    console.log(bill)
     const validPeople = people.filter(p => p.trim() !== '')
     if (validPeople.length === 0) {
       alert('Please add at least one person')
@@ -65,7 +66,7 @@ function ItemAssignment({ bill, onComplete }) {
     }))
 
     try {
-      const response = await api.post(`/bills/${bill.bill_id}/assign`, {
+      const response = await api.post(`/bills/${billId}/assign`, {
         assignments: assignmentData,
         people: validPeople
       })

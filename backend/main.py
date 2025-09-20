@@ -2,7 +2,7 @@ from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 import uvicorn
-from vision_service import parse_receipt
+from vision_service import parse_receipt, configure_gemini
 from models import BillResponse, AssignmentRequest, PaymentLinksResponse
 from database import init_db, save_bill, get_bill, update_bill_splits
 from utils import calculate_splits, generate_qr_code, generate_venmo_link
@@ -27,6 +27,7 @@ app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 @app.on_event("startup")
 async def startup():
     init_db()
+    configure_gemini()
 
 @app.post("/api/upload-receipt")
 async def upload_receipt(file: UploadFile = File(...)):
