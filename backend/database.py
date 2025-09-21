@@ -19,7 +19,7 @@ def get_collection() -> Collection:
     if not mongo_uri:
         raise Exception("MONGO_URI environment variable not set.")
 
-    client = MongoClient(mongo_uri, tlsCAFile=certifi.where())
+    client = MongoClient(mongo_uri, tls=True, tlsCAFile=certifi.where())
     # Explicitly get the database by name. This is more robust than relying
     # on the default from the URI, which can cause errors if not set.
     db = client["splitsmart"]
