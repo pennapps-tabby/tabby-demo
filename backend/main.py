@@ -8,20 +8,8 @@ from database import init_db, save_bill, get_bill, update_bill
 from utils import calculate_splits, generate_qr_code, generate_payment_page_link
 import uuid
 import os
-import time
 
 app = FastAPI(title="Bill Splitter API", root_path="/api")
-
-# Debugging Middleware: Log every request path and response status
-@app.middleware("http")
-async def log_requests(request: Request, call_next):
-    start_time = time.time()
-    print(f"--> Request received for path: {request.url.path}")
-    response = await call_next(request)
-    process_time = time.time() - start_time
-    print(f"<-- Responded with status: {response.status_code} in {process_time:.4f}s")
-    return response
-
 # CORS for development
 app.add_middleware(
     CORSMiddleware,
@@ -40,12 +28,11 @@ os.makedirs(UPLOADS_DIR, exist_ok=True)
 @app.on_event("startup")
 async def startup():
     init_db()
-    # configure_gemini()
+    configure_gemini()
 
 
 @app.post("/upload-receipt")
 async def upload_receipt(file: UploadFile = File(...)):
-    print("HELLO")
     if not file.content_type.startswith("image/"):
         raise HTTPException(400, "File must be an image")
 
@@ -59,9 +46,7 @@ async def upload_receipt(file: UploadFile = File(...)):
 
     # Parse with vision AI
     try:
-        print("HELLO 2")
         parsed_data = await parse_receipt(file_path)
-        print("HELLO 3")
 
         # Save to database
         save_bill(bill_id, parsed_data, file_path)

@@ -4,10 +4,8 @@ import os
 import re
 import google.generativeai as genai
 from dotenv import load_dotenv
-import logging
 
-# load_dotenv()
-logging.basicConfig(level=logging.DEBUG)
+load_dotenv()
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
@@ -51,9 +49,7 @@ async def parse_receipt(image_path: str) -> dict:
         image = Image.open(image_path)
 
         # Generate content using Gemini
-        print("HELLO 2.5")
         response = await model.generate_content_async([prompt, image])
-        print(response.text)
         content = response.text
 
         # Parse JSON from response
