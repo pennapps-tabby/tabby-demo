@@ -147,11 +147,15 @@ async def generate_payment_links(request: Request, bill_id: str, organizer_venmo
     if not splits:
         raise HTTPException(400, "Bill has not been assigned yet")
 
-    # Dynamically determine the frontend URL from the request origin header.
+    # Dynamically determine the frontend URL from the request referer header.
     # This allows preview deployments on Vercel to generate correct links.
-    origin = request.headers.get("origin")
-    print(request.headers)
-    base_url = origin.rstrip('/') if origin else FRONTEND_URL
+    from urllib.parse import urlparse
+    referer = request.headers.get("referer")
+    if referer:
+        parsed_referer = urlparse(referer)
+        base_url = f"{parsed_referer.scheme}://{parsed_referer.netloc}"
+    else:
+        base_url = FRONTEND_URL
 
     outstanding_amount = 0.0
     my_total = 0.0
