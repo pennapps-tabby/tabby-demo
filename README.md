@@ -4,22 +4,26 @@ A modern web application that uses AI to parse receipts and split bills among fr
 
 ## Features
 
-- 📸 **AI Receipt Parsing**: Upload a photo of your receipt and let AI extract items and prices
-- 👥 **Smart Bill Splitting**: Assign items to specific people for proportional splitting
-- 💳 **Venmo Integration**: Generate QR codes and deep links for easy payments
+- 📸 **AI Receipt Parsing**: Upload a photo of your receipt and let Google Gemini AI extract items and prices
+- 👥 **Smart Bill Splitting**: Assign items to specific people for proportional splitting with tax and tip distribution
+- 💳 **Venmo Integration**: Generate QR codes and payment page links for easy payments
 - 📱 **Mobile-Friendly**: Responsive design that works great on phones
 - ⚡ **Real-time Calculation**: Instant split calculations as you assign items
+- 📊 **Payment Tracking**: Track who has paid and who still owes money
+- 📱 **SMS Reminders**: Send text message reminders with payment links
+- 📚 **Bill History**: View and manage your past bills with payment status
+- 🔄 **Payment Status Updates**: Toggle paid status and see outstanding amounts in real-time
 
 ## Tech Stack
 
 ### Backend
 
 - **FastAPI**: Modern Python web framework
-- **SQLite**: Lightweight database for storing bill data
-- **Cerebras AI**: Primary API for receipt parsing
-- **Google Gemini**: Vision API for receipt parsing
+- **MongoDB**: Cloud database for storing bill data
+- **Google Gemini**: AI Vision API for receipt parsing
 - **Pillow**: Image processing
 - **QRCode**: Generate payment QR codes
+- **PyMongo**: MongoDB driver for Python
 
 ### Frontend
 
@@ -28,6 +32,9 @@ A modern web application that uses AI to parse receipts and split bills among fr
 - **Tailwind CSS**: Utility-first CSS framework
 - **Axios**: HTTP client for API calls
 - **Vite**: Fast build tool and dev server
+- **Headless UI**: Accessible UI components
+- **Heroicons**: Beautiful SVG icons
+- **QRCode**: Client-side QR code generation
 
 ## Quick Start
 
@@ -84,10 +91,11 @@ cp env_example.txt .env
 
 **API Keys Setup:**
 
-- **Cerebras API Key (Required)**: Get from https://cerebras.ai
 - **Gemini API Key (Required)**: Get from https://aistudio.google.com/app/apikey
-  - Used as fallback when Cerebras fails
+  - Used for AI-powered receipt parsing
   - Gemini has excellent vision capabilities for receipt parsing
+- **MongoDB URI (Required)**: Get from https://www.mongodb.com/atlas
+  - Used for storing bill data in the cloud
 
 5. Run the backend server:
 
@@ -136,6 +144,7 @@ You can deploy this application for free using Vercel (for the frontend) and Ren
     - **Instance Type**: `Free`
 3.  **Add Environment Variables**:
     - `GEMINI_API_KEY`: Your Google Gemini API key.
+    - `MONGO_URI`: Your MongoDB connection string.
     - `FRONTEND_URL`: The URL of your deployed frontend (e.g., `https://your-app.vercel.app`).
     - `PYTHON_VERSION`: `3.9`
 4.  Click **Create Web Service**. After the first build, your API will be live.
@@ -156,7 +165,8 @@ The `vercel.json` file included in the frontend directory ensures that client-si
 - `POST /api/upload-receipt` - Upload and parse a receipt image
 - `GET /api/bills/{bill_id}` - Get bill data by ID
 - `POST /api/bills/{bill_id}/assign` - Assign items to people and calculate splits
-- `GET /api/bills/{bill_id}/payment-links` - Generate Venmo payment links
+- `POST /api/bills/{bill_id}/toggle-paid` - Toggle paid status for a person
+- `GET /api/bills/{bill_id}/payment-links` - Generate Venmo payment links and QR codes
 - `GET /api/health` - Health check endpoint
 
 ## Usage
@@ -165,18 +175,20 @@ The `vercel.json` file included in the frontend directory ensures that client-si
 2. **Review Items**: Check that the AI correctly parsed all items and prices
 3. **Assign Items**: Add people and assign specific items to them
 4. **Generate Payments**: Create Venmo links and QR codes for each person
+5. **Track Payments**: Monitor who has paid and send SMS reminders
+6. **View History**: Access your bill history and payment status
 
 ## Development
 
 ### Project Structure
 
 ```
-bill-splitter-app/
+tabby-demo/
 ├── backend/
 │   ├── main.py              # FastAPI application
 │   ├── models.py            # Pydantic data models
-│   ├── database.py          # SQLite database operations
-│   ├── vision_service.py    # AI vision API integration
+│   ├── database.py          # MongoDB database operations
+│   ├── vision_service.py    # Google Gemini AI integration
 │   ├── utils.py             # Helper functions
 │   ├── uploads/             # Temporary image storage
 │   └── requirements.txt
@@ -186,42 +198,10 @@ bill-splitter-app/
 │   │   ├── pages/           # Page components
 │   │   ├── services/        # API service layer
 │   │   └── App.jsx          # Main application component
+│   ├── public/              # Static assets
 │   └── package.json
+├── vercel.json              # Vercel deployment configuration
 └── README.md
-```
-
-### Key Components Explained
-
-#### React Components (for Java developers)
-
-**Components** are like Java classes that represent UI elements. They can have:
-
-- **State**: Internal data that can change (like instance variables)
-- **Props**: Data passed from parent components (like constructor parameters)
-- **Lifecycle methods**: Functions that run at specific times (like constructors/destructors)
-
-**Hooks** are special functions that let you use state and lifecycle features in functional components:
-
-- `useState`: Manages component state
-- `useEffect`: Runs code when component mounts or updates
-- `useNavigate`: Programmatic navigation (like redirects)
-
-**JSX** is like a template language that looks like HTML but is actually JavaScript:
-
-```jsx
-// This JSX:
-<div className="container">
-  <h1>Hello {name}</h1>
-</div>
-
-// Compiles to JavaScript that creates DOM elements
-```
-
-**Event Handling** is similar to Java event listeners:
-
-```jsx
-// Button click handler
-<button onClick={() => handleClick()}>Click me</button>
 ```
 
 ## Contributing
