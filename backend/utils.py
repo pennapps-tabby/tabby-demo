@@ -1,6 +1,8 @@
 import qrcode
 import io
 import base64
+import json
+import re
 from typing import Dict, List
 from .models import ItemAssignment
 
@@ -73,3 +75,15 @@ def generate_payment_page_link(base_url: str, recipient: str, amount: float, not
     params = urlencode(
         {"recipient": recipient, "amount": f"{amount:.2f}", "note": note})
     return f"{base_url}/pay?{params}"
+
+
+def extract_json_from_response(content: str) -> dict:
+    """Extracts a JSON object from a string, handling markdown code blocks."""
+    try:
+        return json.loads(content)
+    except json.JSONDecodeError:
+        # Extract JSON from markdown if needed
+        json_match = re.search(r'```json\n(.*?)\n```', content, re.DOTALL)
+        if json_match:
+            return json.loads(json_match.group(1))
+        raise Exception("Could not parse JSON from response")

@@ -1,9 +1,9 @@
 import json
 from PIL import Image
 import os
-import re
 import google.generativeai as genai
 from dotenv import load_dotenv
+from .utils import extract_json_from_response
 
 load_dotenv()
 
@@ -51,16 +51,7 @@ async def parse_receipt(image_path: str) -> dict:
         # Generate content using Gemini
         response = await model.generate_content_async([prompt, image])
         content = response.text
-
-        # Parse JSON from response
-        try:
-            return json.loads(content)
-        except json.JSONDecodeError:
-            # Extract JSON from markdown if needed
-            json_match = re.search(r'```json\n(.*?)\n```', content, re.DOTALL)
-            if json_match:
-                return json.loads(json_match.group(1))
-            raise Exception("Could not parse JSON from response")
+        return extract_json_from_response(content)
 
     except Exception as e:
         raise Exception(f"Gemini API error: {str(e)}")
