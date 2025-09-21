@@ -10,7 +10,6 @@ import uuid
 import os
 
 app = FastAPI(title="Bill Splitter API")
-app = FastAPI(title="Bill Splitter API", root_path="/api")
 
 # CORS for development
 app.add_middleware(
@@ -26,15 +25,12 @@ FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173")
 # Create uploads directory
 os.makedirs("uploads", exist_ok=True)
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
-# Use the /tmp directory for file storage in a serverless environment
-UPLOADS_DIR = "/tmp/uploads"
-os.makedirs(UPLOADS_DIR, exist_ok=True)
 
 
 @app.on_event("startup")
 async def startup():
     init_db()
-    configure_gemini()
+    # configure_gemini()
 
 
 @app.post("/upload-receipt")
@@ -46,7 +42,6 @@ async def upload_receipt(file: UploadFile = File(...)):
     # Save uploaded file
     bill_id = str(uuid.uuid4())
     file_path = f"uploads/{bill_id}_{file.filename}"
-    file_path = os.path.join(UPLOADS_DIR, f"{bill_id}_{file.filename}")
 
     with open(file_path, "wb") as buffer:
         content = await file.read()

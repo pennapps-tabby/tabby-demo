@@ -2,7 +2,6 @@ import json
 import os
 
 DB_DIR = "db"
-DB_DIR = "/tmp/db"
 
 
 def init_db():
