@@ -26,7 +26,7 @@ async def parse_receipt(image_path: str) -> dict:
     Be precise and follow the JSON format exactly.
 
     1.  **Restaurant Name**: The name of the establishment.
-    2.  **Items**: A list of all individual items. If an item appears with a quantity greater than one (e.g., "2 x Item Name"), expand it into separate items in the list (e.g., two "Item Name" entries).
+    2.  **Items**: A list of all individual items. If an item appears with a quantity greater than one (e.g., "2 x Item Name"), expand it into separate items in the list (e.g., two "Item Name" entries). If an item has no listed price, do not include it in the response.
     3.  **Subtotal**: The total cost of items before tax and tip. If there are separate subtotals (e.g., for food and drinks), sum them into a single value.
     4.  **Tax**: The tax amount.
     5.  **Tip**: The tip amount. Look for both printed and handwritten tips. If no tip is found, this value must be 0.0.
