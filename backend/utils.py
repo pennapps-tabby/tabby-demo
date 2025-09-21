@@ -67,6 +67,9 @@ def generate_qr_code(data: str) -> str:
     return f"data:image/png;base64,{img_str}"
 
 
-def generate_venmo_link(recipient: str, amount: float, note: str) -> str:
-    """Generate Venmo deep link"""
-    return f"venmo://paycharge?txn=pay&recipients={recipient}&amount={amount:.2f}&note={note}"
+def generate_payment_page_link(base_url: str, recipient: str, amount: float, note: str) -> str:
+    """Generate a universal payment page link for our app."""
+    from urllib.parse import urlencode
+    params = urlencode(
+        {"recipient": recipient, "amount": f"{amount:.2f}", "note": note})
+    return f"{base_url}/pay?{params}"

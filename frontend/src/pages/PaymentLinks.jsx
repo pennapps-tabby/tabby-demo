@@ -102,9 +102,13 @@ function PaymentLinks() {
     }
   }
 
-  const handleSendReminder = (person, amount, venmo_link) => {
+  const handleSendReminder = (person, paymentDetails) => {
+    const { amount, item_total, tax_share, tip_share, payment_page_link } = paymentDetails;
     const restaurantName = billDetails?.restaurant_name || 'the bill';
-    const message = `Hey ${person}, just a reminder for the bill from ${restaurantName}. You owe $${amount.toFixed(2)}. You can use this link to pay: ${venmo_link}`;
+    
+    const message = `Hey ${person}, reminder for ${restaurantName}. Total: $${amount.toFixed(2)}
+(Items: $${item_total.toFixed(2)}, Tax: $${tax_share.toFixed(2)}, Tip: $${tip_share.toFixed(2)})
+Pay here: ${payment_page_link}`;
     const encodedMessage = encodeURIComponent(message);
     window.location.href = `sms:?&body=${encodedMessage}`;
   };
@@ -156,7 +160,9 @@ function PaymentLinks() {
             </div>
           </div>
           <div className="space-y-4">
-            {paymentInfo.payment_links.map(({ person, amount, venmo_link, qr_code, paid }) => (
+            {paymentInfo.payment_links.map((paymentDetails) => {
+              const { person, amount, payment_page_link, qr_code, paid } = paymentDetails;
+              return (
               <div key={person} className={`p-4 rounded-lg border ${paid ? 'bg-green-50 border-green-200' : 'bg-gray-50'}`}>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -173,20 +179,22 @@ function PaymentLinks() {
                   </div>
                   {!paid && (
                     <div className="flex items-center gap-4">
-                      <button
-                        onClick={() => handleSendReminder(person, amount, venmo_link)}
-                        className="p-2 bg-gray-200 text-gray-600 rounded-full hover:bg-gray-300"
-                        title="Send Reminder Text"
-                      >
-                        <ChatBubbleLeftEllipsisIcon className="h-5 w-5" />
-                      </button>
-                      <a href={venmo_link} className="px-4 py-2 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600">Pay with Venmo</a>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => handleSendReminder(person, paymentDetails)}
+                          className="p-2 bg-gray-200 text-gray-600 rounded-full hover:bg-gray-300"
+                          title="Send Reminder Text"
+                        >
+                          <ChatBubbleLeftEllipsisIcon className="h-5 w-5" />
+                        </button>
+                      </div>
+                      <a href={payment_page_link} className="px-4 py-2 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600">Pay with Venmo</a>
                       <img src={qr_code} alt={`QR code for ${person}`} className="w-20 h-20" />
                     </div>
                   )}
                 </div>
               </div>
-            ))}
+            )})}
           </div>
         </div>
       )}

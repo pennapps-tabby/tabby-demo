@@ -8,6 +8,7 @@ import BillPage from './pages/BillPage'
 import HistoryPage from './pages/HistoryPage'
 import SettingsPage from './pages/SettingsPage'
 import PaymentLinks from './pages/PaymentLinks'
+import PaymentRedirectPage from './pages/PaymentRedirectPage'
 
 const router = createBrowserRouter([
   {
@@ -17,6 +18,7 @@ const router = createBrowserRouter([
       { index: true, element: <HomePage /> },
       { path: 'bill/:billId', element: <BillPage /> },
       { path: 'bill/:billId/payment-links', element: <PaymentLinks /> },
+      { path: 'pay', element: <PaymentRedirectPage /> },
       { path: 'history', element: <HistoryPage /> },
       { path: 'settings', element: <SettingsPage /> },
     ],

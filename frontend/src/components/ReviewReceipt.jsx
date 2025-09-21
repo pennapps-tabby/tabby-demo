@@ -123,64 +123,46 @@ function ReviewReceipt({ bill, onContinue }) {
               {isEditingSummary ? 'Done Editing' : 'Edit Summary'}
             </button>
           </div>
-          <div className="space-y-2 text-lg">
-            <div className="flex justify-between items-center">
-              <span>Subtotal:</span>
-              {isEditingSummary ? (
+          {isEditingSummary ? (
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <label className="text-lg">Subtotal:</label>
                 <div className="relative">
                   <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400">$</span>
                   <input type="number" value={editableBill.subtotal} onChange={(e) => handleSummaryChange('subtotal', e.target.value)} className="w-28 text-right pl-5 p-1 border rounded-md" />
                 </div>
-              ) : (
-                <span>${editableBill.subtotal.toFixed(2)}</span>
-              )}
-            </div>
-            <div className="flex justify-between items-center">
-              <span>Tax:</span>
-              {isEditingSummary ? (
+              </div>
+              <div className="flex justify-between items-center">
+                <label className="text-lg">Tax:</label>
                 <div className="relative">
                   <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400">$</span>
                   <input type="number" value={editableBill.tax} onChange={(e) => handleSummaryChange('tax', e.target.value)} className="w-28 text-right pl-5 p-1 border rounded-md" />
                 </div>
-              ) : (
-                <span>${editableBill.tax.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <label className="text-lg font-semibold">Tip:</label>
+                <div className="relative">
+                  <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400">$</span>
+                  <input type="number" value={editableBill.tip > 0 ? editableBill.tip : ''} placeholder="0.00" onChange={(e) => handleTipChange(e.target.value)} className="w-28 text-right pl-5 p-1 border rounded-md" />
+                </div>
+              </div>
+              {bill.tip === 0 && (
+                <div className="flex flex-wrap gap-2 justify-end">
+                  <button onClick={() => addPercentageTip(0.15)} className={tipButtonClass(0.15)}>15%</button>
+                  <button onClick={() => addPercentageTip(0.18)} className={tipButtonClass(0.18)}>18%</button>
+                  <button onClick={() => addPercentageTip(0.20)} className={tipButtonClass(0.20)}>20%</button>
+                </div>
               )}
             </div>
-            <div className="flex justify-between font-semibold">
-              <span>Tip:</span>
-              <span>${editableBill.tip.toFixed(2)}</span>
+          ) : (
+            <div className="space-y-2 text-lg">
+              <div className="flex justify-between"><span>Subtotal:</span> <span>${editableBill.subtotal.toFixed(2)}</span></div>
+              <div className="flex justify-between"><span>Tax:</span> <span>${editableBill.tax.toFixed(2)}</span></div>
+              <div className="flex justify-between font-semibold"><span>Tip:</span> <span>${editableBill.tip.toFixed(2)}</span></div>
             </div>
-          </div>
+          )}
           <hr className="my-2"/>
           <div className="flex justify-between font-bold text-xl"><span>Total:</span> <span>${editableBill.total.toFixed(2)}</span></div>
-        </div>
-      </div>
-
-      {/* Tip Section */}
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h3 className="text-lg font-semibold mb-4">Adjust Tip</h3>
-        <div className="flex flex-wrap gap-4 items-center">
-          {bill.tip === 0 && (
-            <>
-              <button onClick={() => addPercentageTip(0.15)} className={tipButtonClass(0.15)}>15%</button>
-              <button onClick={() => addPercentageTip(0.18)} className={tipButtonClass(0.18)}>18%</button>
-              <button onClick={() => addPercentageTip(0.20)} className={tipButtonClass(0.20)}>20%</button>
-            </>
-          )}
-          <div className="flex items-center gap-2">
-            <label htmlFor="custom-tip" className="text-gray-600">{bill.tip > 0 ? "Adjust Amount:" : "Custom:"}</label>
-            <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">$</span>
-                <input
-                    id="custom-tip"
-                    type="number"
-                    value={editableBill.tip > 0 ? editableBill.tip : ''}
-                    placeholder="Amount"
-                    onChange={(e) => handleTipChange(e.target.value)}
-                    className={`w-32 pl-7 pr-2 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${selectedTip === 'custom' ? 'border-blue-500' : 'border-gray-300'}`}
-                />
-            </div>
-          </div>
         </div>
       </div>
 

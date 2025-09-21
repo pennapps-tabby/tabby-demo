@@ -5,7 +5,7 @@ import uvicorn
 from vision_service import parse_receipt, configure_gemini
 from models import BillResponse, AssignmentRequest, PaymentLinksResponse, TogglePaidRequest
 from database import init_db, save_bill, get_bill, update_bill_splits
-from utils import calculate_splits, generate_qr_code, generate_venmo_link
+from utils import calculate_splits, generate_qr_code, generate_payment_page_link
 import uuid
 import os
 
@@ -19,6 +19,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173")
 
 # Create uploads directory
 os.makedirs("uploads", exist_ok=True)
@@ -140,14 +142,17 @@ async def generate_payment_links(bill_id: str, organizer_venmo: str, organizer_n
 
             if amount_due > 0:  # Only generate links for people who owe money
                 note = f"Bill from {bill.get('restaurant_name', 'Restaurant')}"
-                venmo_link = generate_venmo_link(
-                    organizer_venmo, amount_due, note)
-                qr_code = generate_qr_code(venmo_link)
+                payment_page_link = generate_payment_page_link(
+                    FRONTEND_URL, organizer_venmo, amount_due, note)
+                qr_code = generate_qr_code(payment_page_link)
 
                 links.append({
                     "person": person,
                     "amount": amount_due,
-                    "venmo_link": venmo_link,
+                    "item_total": details.get("item_total", 0.0),
+                    "tax_share": details.get("tax_share", 0.0),
+                    "tip_share": details.get("tip_share", 0.0),
+                    "payment_page_link": payment_page_link,
                     "qr_code": qr_code,
                     "paid": is_paid
                 })

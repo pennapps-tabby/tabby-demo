@@ -47,7 +47,10 @@ class TogglePaidRequest(BaseModel):
 class PaymentLink(BaseModel):
     person: str
     amount: float
-    venmo_link: str
+    item_total: float
+    tax_share: float
+    tip_share: float
+    payment_page_link: str
     qr_code: str
     paid: bool
 
