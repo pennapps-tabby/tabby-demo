@@ -4,8 +4,10 @@ import os
 import google.generativeai as genai
 from dotenv import load_dotenv
 from .utils import extract_json_from_response
+import logging
 
 load_dotenv()
+logging.basicConfig(level=logging.DEBUG)
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
@@ -48,10 +50,13 @@ async def parse_receipt(image_path: str) -> dict:
         # Load and process image
         image = Image.open(image_path)
 
+        print("HELLO 2.5")
         # Generate content using Gemini
         response = await model.generate_content_async([prompt, image])
+        print(response.text)
         content = response.text
         return extract_json_from_response(content)
 
     except Exception as e:
+        print(f"Error in parse_receipt: {e}")
         raise Exception(f"Gemini API error: {str(e)}")
