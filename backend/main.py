@@ -42,7 +42,8 @@ os.makedirs(UPLOADS_DIR, exist_ok=True)
 @app.on_event("startup")
 async def startup():
     init_db()
-    configure_gemini()
+    # The configure_gemini() call is moved to be just-in-time in parse_receipt
+    # to ensure it runs in the correct async context.
 
 
 @app.post("/upload-receipt")
