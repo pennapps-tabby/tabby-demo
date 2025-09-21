@@ -135,7 +135,7 @@ async def toggle_paid_status(bill_id: str, request: TogglePaidRequest):
 
 
 @app.get("/bills/{bill_id}/payment-links")
-async def generate_payment_links(bill_id: str, organizer_venmo: str, organizer_name: str = "Me"):
+async def generate_payment_links(request: Request, bill_id: str, organizer_venmo: str, organizer_name: str = "Me"):
     """Generate payment links for each person"""
     bill = get_bill(bill_id)
     if not bill:
@@ -144,6 +144,11 @@ async def generate_payment_links(bill_id: str, organizer_venmo: str, organizer_n
     splits = bill.get("splits", {})
     if not splits:
         raise HTTPException(400, "Bill has not been assigned yet")
+
+    # Dynamically determine the frontend URL from the request origin header.
+    # This allows preview deployments on Vercel to generate correct links.
+    origin = request.headers.get("origin")
+    base_url = origin.rstrip('/') if origin else FRONTEND_URL
 
     outstanding_amount = 0.0
     my_total = 0.0
@@ -161,7 +166,7 @@ async def generate_payment_links(bill_id: str, organizer_venmo: str, organizer_n
             if amount_due > 0:  # Only generate links for people who owe money
                 note = f"Bill from {bill.get('restaurant_name', 'Restaurant')}"
                 payment_page_link = generate_payment_page_link(
-                    FRONTEND_URL, organizer_venmo, amount_due, note)
+                    base_url, organizer_venmo, amount_due, note)
                 qr_code = generate_qr_code(payment_page_link)
 
                 links.append({
