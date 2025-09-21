@@ -1,13 +1,18 @@
+import sys
+import os
 from fastapi import FastAPI, UploadFile, File, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 import uvicorn
-from vision_service import parse_receipt, configure_gemini
-from models import BillResponse, AssignmentRequest, PaymentLinksResponse, TogglePaidRequest
-from database import init_db, save_bill, get_bill, update_bill
-from utils import calculate_splits, generate_qr_code, generate_payment_page_link
 import uuid
-import os
+
+# Add project root to the Python path to allow absolute imports
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from backend.vision_service import parse_receipt, configure_gemini
+from backend.models import BillResponse, AssignmentRequest, PaymentLinksResponse, TogglePaidRequest
+from backend.database import init_db, save_bill, get_bill, update_bill
+from backend.utils import calculate_splits, generate_qr_code, generate_payment_page_link
 
 app = FastAPI(title="Bill Splitter API", root_path="/api")
 # CORS for development
