@@ -19,8 +19,9 @@ def get_collection() -> Collection:
         raise Exception("MONGO_URI environment variable not set.")
 
     client = MongoClient(mongo_uri)
-    # The database name is part of the URI, so we can get it directly.
-    db = client.get_database()
+    # Explicitly get the database by name. This is more robust than relying
+    # on the default from the URI, which can cause errors if not set.
+    db = client["splitsmart"]
     bills_collection = db["bills"]
     print("MongoDB connection initialized.")
     return bills_collection
