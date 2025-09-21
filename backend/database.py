@@ -2,6 +2,7 @@ import json
 import os
 from pymongo import MongoClient
 from pymongo.collection import Collection
+import certifi
 
 
 # MongoDB client and collection, will be initialized on startup
@@ -18,9 +19,10 @@ def get_collection() -> Collection:
     if not mongo_uri:
         raise Exception("MONGO_URI environment variable not set.")
 
-    client = MongoClient(mongo_uri)
-    # The database name is part of the URI, so we can get it directly.
-    db = client.get_database()
+    client = MongoClient(mongo_uri, tls=True, tlsCAFile=certifi.where())
+    # Explicitly get the database by name. This is more robust than relying
+    # on the default from the URI, which can cause errors if not set.
+    db = client["splitsmart"]
     bills_collection = db["bills"]
     print("MongoDB connection initialized.")
     return bills_collection

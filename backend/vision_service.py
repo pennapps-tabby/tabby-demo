@@ -5,6 +5,7 @@ import google.generativeai as genai
 from dotenv import load_dotenv
 from .utils import extract_json_from_response
 import logging
+import asyncio
 
 load_dotenv()
 logging.basicConfig(level=logging.DEBUG)
@@ -14,16 +15,12 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 def configure_gemini():
     """Configures the Gemini API key."""
-    if not GEMINI_API_KEY:
-        raise Exception(
-            "Gemini API key not provided. Please set GEMINI_API_KEY environment variable.")
-    genai.configure(api_key=GEMINI_API_KEY)
+    # This function is no longer needed as configuration is done in parse_receipt.
+    pass
 
 
 async def parse_receipt(image_path: str) -> dict:
     """Parse receipt using Google Gemini Vision API"""
-
-    model = genai.GenerativeModel('gemini-2.5-flash-lite')
     prompt = f"""
     Parse the receipt image and extract the following information.
     Be precise and follow the JSON format exactly.
@@ -47,8 +44,16 @@ async def parse_receipt(image_path: str) -> dict:
     """
 
     try:
-        # Load and process image
-        image = Image.open(image_path)
+        # Configure the API key just-in-time within the async context.
+        # This ensures the underlying grpc transport is initialized correctly
+        # with the running asyncio event loop.
+        genai.configure(api_key=GEMINI_API_KEY)
+        model = genai.GenerativeModel('gemini-2.5-flash-lite')
+
+        # Load image in a separate thread to avoid blocking the event loop.
+        # This is crucial for libraries like Pillow that are not async-native.
+        loop = asyncio.get_running_loop()
+        image = await loop.run_in_executor(None, Image.open, image_path)
 
         print("HELLO 2.5")
         # Generate content using Gemini

@@ -10,6 +10,7 @@ from .utils import (calculate_splits, generate_payment_page_link,
                     generate_qr_code)
 import uuid
 import os
+import aiofiles
 import time
 
 app = FastAPI(title="Bill Splitter API", root_path="/api")
@@ -32,7 +33,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173")
+FRONTEND_URL = "http://localhost:5173"
 
 # Use the /tmp directory for file storage in a serverless environment
 UPLOADS_DIR = "/tmp/uploads"
@@ -41,7 +42,8 @@ os.makedirs(UPLOADS_DIR, exist_ok=True)
 @app.on_event("startup")
 async def startup():
     init_db()
-    configure_gemini()
+    # The configure_gemini() call is moved to be just-in-time in parse_receipt
+    # to ensure it runs in the correct async context.
 
 
 @app.post("/upload-receipt")
@@ -54,9 +56,9 @@ async def upload_receipt(file: UploadFile = File(...)):
     bill_id = str(uuid.uuid4())
     file_path = os.path.join(UPLOADS_DIR, f"{bill_id}_{file.filename}")
 
-    with open(file_path, "wb") as buffer:
+    async with aiofiles.open(file_path, "wb") as buffer:
         content = await file.read()
-        buffer.write(content)
+        await buffer.write(content)
 
     # Parse with vision AI
     try:
@@ -135,7 +137,7 @@ async def toggle_paid_status(bill_id: str, request: TogglePaidRequest):
 
 
 @app.get("/bills/{bill_id}/payment-links")
-async def generate_payment_links(bill_id: str, organizer_venmo: str, organizer_name: str = "Me"):
+async def generate_payment_links(request: Request, bill_id: str, organizer_venmo: str, organizer_name: str = "Me"):
     """Generate payment links for each person"""
     bill = get_bill(bill_id)
     if not bill:
@@ -144,6 +146,16 @@ async def generate_payment_links(bill_id: str, organizer_venmo: str, organizer_n
     splits = bill.get("splits", {})
     if not splits:
         raise HTTPException(400, "Bill has not been assigned yet")
+
+    # Dynamically determine the frontend URL from the request referer header.
+    # This allows preview deployments on Vercel to generate correct links.
+    from urllib.parse import urlparse
+    referer = request.headers.get("referer")
+    if referer:
+        parsed_referer = urlparse(referer)
+        base_url = f"{parsed_referer.scheme}://{parsed_referer.netloc}"
+    else:
+        base_url = FRONTEND_URL
 
     outstanding_amount = 0.0
     my_total = 0.0
@@ -161,7 +173,7 @@ async def generate_payment_links(bill_id: str, organizer_venmo: str, organizer_n
             if amount_due > 0:  # Only generate links for people who owe money
                 note = f"Bill from {bill.get('restaurant_name', 'Restaurant')}"
                 payment_page_link = generate_payment_page_link(
-                    FRONTEND_URL, organizer_venmo, amount_due, note)
+                    base_url, organizer_venmo, amount_due, note)
                 qr_code = generate_qr_code(payment_page_link)
 
                 links.append({
