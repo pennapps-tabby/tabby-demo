@@ -33,7 +33,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173")
+FRONTEND_URL = "http://localhost:5173"
 
 # Use the /tmp directory for file storage in a serverless environment
 UPLOADS_DIR = "/tmp/uploads"
@@ -150,6 +150,7 @@ async def generate_payment_links(request: Request, bill_id: str, organizer_venmo
     # Dynamically determine the frontend URL from the request origin header.
     # This allows preview deployments on Vercel to generate correct links.
     origin = request.headers.get("origin")
+    print(request.headers)
     base_url = origin.rstrip('/') if origin else FRONTEND_URL
 
     outstanding_amount = 0.0
