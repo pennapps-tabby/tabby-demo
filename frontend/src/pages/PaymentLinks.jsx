@@ -55,7 +55,12 @@ function PaymentLinks() {
       // Add to history
       const history = JSON.parse(localStorage.getItem('billHistory') || '[]')
       if (!history.find(item => item.billId === billId)) {
-        history.unshift({ billId, restaurant: currentBillDetails?.restaurant_name, date: new Date().toISOString() })
+        history.unshift({ 
+          billId, 
+          restaurant: currentBillDetails?.restaurant_name, 
+          date: new Date().toISOString(),
+          fullyPaid: response.data.outstanding_amount === 0
+        })
         localStorage.setItem('billHistory', JSON.stringify(history.slice(0, 20))) // Keep last 20
       }
 
@@ -81,6 +86,14 @@ function PaymentLinks() {
 
       // Make API call
       await api.post(`/bills/${billId}/toggle-paid`, { person })
+
+      // Update history with paid status
+      const history = JSON.parse(localStorage.getItem('billHistory') || '[]')
+      const billIndex = history.findIndex(item => item.billId === billId)
+      if (billIndex > -1) {
+        history[billIndex].fullyPaid = updatedOutstanding === 0;
+        localStorage.setItem('billHistory', JSON.stringify(history));
+      }
     } catch (err) {
       setError(`Failed to update status for ${person}. Please refresh and try again.`)
       console.error(err)

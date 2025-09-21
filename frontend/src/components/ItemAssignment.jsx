@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import api from '../services/api'
+import { UserGroupIcon } from '@heroicons/react/24/outline'
 
 function ItemAssignment({ bill, billId, onComplete }) {
   const [people, setPeople] = useState(['Me', ''])
@@ -53,6 +54,22 @@ function ItemAssignment({ bill, billId, onComplete }) {
       newAssignments[itemIndex] = [...currentAssignments, personIndex]
     }
     
+    setAssignments(newAssignments)
+  }
+
+  const handleSplitItemEvenly = (itemIndex) => {
+    const allPeopleIndices = people.map((p, i) => p.trim() ? i : -1).filter(i => i !== -1)
+    const newAssignments = { ...assignments }
+    newAssignments[itemIndex] = allPeopleIndices
+    setAssignments(newAssignments)
+  }
+
+  const handleSplitAllEvenly = () => {
+    const allPeopleIndices = people.map((p, i) => p.trim() ? i : -1).filter(i => i !== -1)
+    const newAssignments = { ...assignments }
+    Object.keys(newAssignments).forEach(itemIndex => {
+      newAssignments[itemIndex] = allPeopleIndices
+    })
     setAssignments(newAssignments)
   }
 
@@ -129,7 +146,17 @@ function ItemAssignment({ bill, billId, onComplete }) {
 
       {/* Item Assignment Section */}
       <div className="bg-white rounded-lg shadow-md p-6">
-        <h3 className="text-lg font-semibold mb-4">Assign Items</h3>
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-semibold">Assign Items</h3>
+          <button
+            onClick={handleSplitAllEvenly}
+            className="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1"
+            title="Split all items evenly among all people"
+          >
+            <UserGroupIcon className="h-4 w-4" />
+            Split All Items Evenly
+          </button>
+        </div>
         <div className="space-y-3">
           {bill.items.map((item, itemIndex) => (
             <div key={itemIndex} className="border border-gray-200 rounded-lg p-4">
@@ -153,6 +180,13 @@ function ItemAssignment({ bill, billId, onComplete }) {
                     </button>
                   )
                 ))}
+                <button
+                  onClick={() => handleSplitItemEvenly(itemIndex)}
+                  className="px-3 py-1 rounded-full text-xs bg-gray-100 text-gray-600 hover:bg-indigo-100 hover:text-indigo-700 border border-dashed"
+                  title="Split this item evenly"
+                >
+                  Split Evenly
+                </button>
               </div>
             </div>
           ))}

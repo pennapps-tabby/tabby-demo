@@ -159,12 +159,16 @@ function ReviewReceipt({ bill, onContinue }) {
       {/* Tip Section */}
       <div className="bg-white rounded-lg shadow-md p-6">
         <h3 className="text-lg font-semibold mb-4">Adjust Tip</h3>
-        <div className="flex flex-wrap gap-3 items-center">
-          <button onClick={() => addPercentageTip(0.15)} className={tipButtonClass(0.15)}>15%</button>
-          <button onClick={() => addPercentageTip(0.18)} className={tipButtonClass(0.18)}>18%</button>
-          <button onClick={() => addPercentageTip(0.20)} className={tipButtonClass(0.20)}>20%</button>
+        <div className="flex flex-wrap gap-4 items-center">
+          {bill.tip === 0 && (
+            <>
+              <button onClick={() => addPercentageTip(0.15)} className={tipButtonClass(0.15)}>15%</button>
+              <button onClick={() => addPercentageTip(0.18)} className={tipButtonClass(0.18)}>18%</button>
+              <button onClick={() => addPercentageTip(0.20)} className={tipButtonClass(0.20)}>20%</button>
+            </>
+          )}
           <div className="flex items-center gap-2">
-            <label htmlFor="custom-tip" className="text-gray-600">Custom:</label>
+            <label htmlFor="custom-tip" className="text-gray-600">{bill.tip > 0 ? "Adjust Amount:" : "Custom:"}</label>
             <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">$</span>
                 <input
