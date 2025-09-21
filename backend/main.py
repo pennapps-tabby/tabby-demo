@@ -69,6 +69,12 @@ async def upload_receipt(file: UploadFile = File(...)):
         parsed_data = await parse_receipt(file_path)
         print("HELLO 3")
 
+        # Filter out items with no price
+        if "items" in parsed_data and isinstance(parsed_data["items"], list):
+            parsed_data["items"] = [
+                item for item in parsed_data["items"] if item.get("price") is not None
+            ]
+
         # Save to database
         save_bill(bill_id, parsed_data, file_path)
 
