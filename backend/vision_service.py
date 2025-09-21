@@ -24,6 +24,7 @@ async def parse_receipt(image_path: str) -> dict:
     prompt = f"""
     Parse the receipt image and extract the following information.
     Be precise and follow the JSON format exactly.
+    If an item, subtotal, total, or any other a price with parentheses around it, include its price in the response as a negative value.
 
     1.  **Restaurant Name**: The name of the establishment.
     2.  **Items**: A list of all individual items. If an item appears with a quantity greater than one (e.g., "2 x Item Name"), expand it into separate items in the list (e.g., two "Item Name" entries). If an item has no listed price, do not include it in the response.
