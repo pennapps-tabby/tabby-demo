@@ -21,6 +21,14 @@
       "dest": "/frontend/assets/$1"
     },
     {
+      "src": "/Tabby%20Logo.png",
+      "dest": "/frontend/Tabby Logo.png"
+    },
+    {
+      "src": "/Tabby%20Favicon.png",
+      "dest": "/frontend/Tabby Favicon.png"
+    },
+    {
       "src": "/(.*)",
       "dest": "/frontend/index.html"
     }
