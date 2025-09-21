@@ -2,7 +2,7 @@ import qrcode
 import io
 import base64
 from typing import Dict, List
-from models import ItemAssignment
+from .models import ItemAssignment
 
 
 def calculate_splits(bill_data: Dict, assignments: List[ItemAssignment], people: List[str]) -> Dict[str, Dict]:
