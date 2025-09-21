@@ -12,8 +12,16 @@ import uuid
 import os
 import aiofiles
 import time
+from contextlib import asynccontextmanager
 
-app = FastAPI(title="Bill Splitter API", root_path="/api")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
+    init_db()
+    yield
+    # Shutdown (if needed)
+
+app = FastAPI(title="Bill Splitter API", root_path="/api", lifespan=lifespan)
 
 # Debugging Middleware: Log every request path and response status
 @app.middleware("http")
@@ -39,11 +47,6 @@ FRONTEND_URL = "http://localhost:5173"
 UPLOADS_DIR = "/tmp/uploads"
 os.makedirs(UPLOADS_DIR, exist_ok=True)
 
-@app.on_event("startup")
-async def startup():
-    init_db()
-    # The configure_gemini() call is moved to be just-in-time in parse_receipt
-    # to ensure it runs in the correct async context.
 
 
 @app.post("/upload-receipt")
