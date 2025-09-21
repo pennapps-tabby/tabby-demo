@@ -6,8 +6,16 @@ function Home() {
 
   return (
     <div className="text-center">
+      <div className="flex justify-center mb-6">
+        <img 
+          src="/Tabby Logo.png" 
+          alt="Tabby Logo" 
+          className="h-16 w-16 object-cover rounded-xl"
+          style={{ objectPosition: 'center' }}
+        />
+      </div>
       <h1 className="text-4xl font-bold text-gray-900 mb-6">
-        Welcome to SplitSmart
+        Welcome to Tabby
       </h1>
       <p className="text-xl text-gray-600 mb-8">
         Easily split bills with friends using AI-powered receipt scanning

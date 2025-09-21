@@ -1,4 +1,4 @@
-# SplitSmart - AI-Powered Bill Splitter
+# Tabby - AI-Powered Bill Splitter
 
 A modern web application that uses AI to parse receipts and split bills among friends with Venmo integration.
 

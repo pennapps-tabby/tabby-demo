@@ -33,6 +33,13 @@ function HomePage() {
   return (
     <div className="text-center">
       <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl p-8">
+        <div className="flex justify-center mb-4">
+          <img 
+            src="/Tabby Logo.png" 
+            alt="Tabby Logo" 
+            className="h-12 w-12 object-contain rounded-lg"
+          />
+        </div>
         <h1 className="text-3xl font-bold text-gray-800 mb-2">Split Bills with a Snap</h1>
         <p className="text-gray-500 mb-6">Upload a receipt to get started.</p>
         <label
