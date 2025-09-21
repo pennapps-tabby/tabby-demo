@@ -14,7 +14,7 @@ app = FastAPI(title="Bill Splitter API")
 # CORS for development
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # Vite dev server
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -35,6 +35,7 @@ async def startup():
 
 @app.post("/api/upload-receipt")
 async def upload_receipt(file: UploadFile = File(...)):
+    print("HELLO")
     if not file.content_type.startswith("image/"):
         raise HTTPException(400, "File must be an image")
 
@@ -48,7 +49,9 @@ async def upload_receipt(file: UploadFile = File(...)):
 
     # Parse with vision AI
     try:
+        print("HELLO 2")
         parsed_data = await parse_receipt(file_path)
+        print("HELLO 3")
 
         # Save to database
         save_bill(bill_id, parsed_data, file_path)

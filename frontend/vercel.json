@@ -1,8 +1,27 @@
 {
-  "rewrites": [
+  "version": 2,
+  "builds": [
     {
-      "source": "/:path((?!api/).*)",
-      "destination": "/"
+      "src": "../backend/main.py",
+      "use": "@vercel/python"
+    },
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": { "distDir": "dist" }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "../backend/main.py"
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
   ]
 }
