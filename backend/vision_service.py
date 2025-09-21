@@ -9,42 +9,49 @@ load_dotenv()
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
+
 def configure_gemini():
     """Configures the Gemini API key."""
     if not GEMINI_API_KEY:
-        raise Exception("Gemini API key not provided. Please set GEMINI_API_KEY environment variable.")
+        raise Exception(
+            "Gemini API key not provided. Please set GEMINI_API_KEY environment variable.")
     genai.configure(api_key=GEMINI_API_KEY)
+
 
 async def parse_receipt(image_path: str) -> dict:
     """Parse receipt using Google Gemini Vision API"""
+
+    model = genai.GenerativeModel('gemini-2.5-flash-lite')
+    prompt = f"""
+    Parse the receipt image and extract the following information.
+    Be precise and follow the JSON format exactly.
+
+    1.  **Restaurant Name**: The name of the establishment.
+    2.  **Items**: A list of all individual items. If an item appears with a quantity greater than one (e.g., "2 x Item Name"), expand it into separate items in the list (e.g., two "Item Name" entries).
+    3.  **Subtotal**: The total cost of items before tax and tip. If there are separate subtotals (e.g., for food and drinks), sum them into a single value.
+    4.  **Tax**: The tax amount.
+    5.  **Tip**: The tip amount. Look for both printed and handwritten tips. If no tip is found, this value must be 0.0.
+    6.  **Total**: The final amount paid.
     
-    model = genai.GenerativeModel('gemini-1.5-flash-latest')
-    prompt = """
-    Parse this receipt image and extract:
-    1. All individual items with prices
-    2. Subtotal
-    3. Tax amount
-    4. Total amount
-    5. Restaurant name
-    
-    Return as JSON:
-    {
-        "items": [{"name": "Item Name", "price": 12.99}],
-        "subtotal": 45.67,
-        "tax": 3.89,
-        "total": 49.56,
-        "restaurant_name": "Restaurant Name"
-    }
+    Return ONLY a valid JSON object in the following format, with no extra text or markdown formatting:
+    {{
+        "restaurant_name": "The Example Cafe",
+        "items": [{{"name": "Espresso", "price": 3.50}}, {{"name": "Latte", "price": 4.50}}],
+        "subtotal": 8.00,
+        "tax": 0.71,
+        "tip": 1.50,
+        "total": 10.21
+    }}
     """
-    
+
     try:
         # Load and process image
         image = Image.open(image_path)
-        
+
         # Generate content using Gemini
         response = await model.generate_content_async([prompt, image])
         content = response.text
-        
+
         # Parse JSON from response
         try:
             return json.loads(content)
@@ -54,6 +61,6 @@ async def parse_receipt(image_path: str) -> dict:
             if json_match:
                 return json.loads(json_match.group(1))
             raise Exception("Could not parse JSON from response")
-            
+
     except Exception as e:
         raise Exception(f"Gemini API error: {str(e)}")

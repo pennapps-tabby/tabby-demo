@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import api from '../services/api'
 
 function ItemAssignment({ bill, billId, onComplete }) {
-  const [people, setPeople] = useState([''])
+  const [people, setPeople] = useState(['Me', ''])
   const [assignments, setAssignments] = useState({})
   const [splits, setSplits] = useState({})
 
@@ -26,17 +26,21 @@ function ItemAssignment({ bill, billId, onComplete }) {
   }
 
   const removePerson = (index) => {
-    if (people.length > 1) {
-      const newPeople = people.filter((_, i) => i !== index)
-      setPeople(newPeople)
-      
-      // Remove this person from all assignments
-      const newAssignments = { ...assignments }
-      Object.keys(newAssignments).forEach(itemIndex => {
-        newAssignments[itemIndex] = newAssignments[itemIndex].filter(i => i !== index)
-      })
-      setAssignments(newAssignments)
-    }
+    if (index === 0 || people.length <= 1) return; // Cannot remove "Me" or the last person input
+
+    const personToRemove = people[index];
+    const newPeople = people.filter((_, i) => i !== index);
+    setPeople(newPeople);
+
+    // Update assignments: remove the person and shift indices for subsequent people
+    const newAssignments = { ...assignments };
+    Object.keys(newAssignments).forEach(itemIndex => {
+      const updatedItemAssignments = newAssignments[itemIndex]
+        .filter(personIdx => personIdx !== index) // Remove the person
+        .map(personIdx => (personIdx > index ? personIdx - 1 : personIdx)); // Shift indices
+      newAssignments[itemIndex] = updatedItemAssignments;
+    });
+    setAssignments(newAssignments);
   }
 
   const toggleAssignment = (itemIndex, personIndex) => {
@@ -52,8 +56,11 @@ function ItemAssignment({ bill, billId, onComplete }) {
     setAssignments(newAssignments)
   }
 
+  const hasAssignments = () => {
+    return Object.values(assignments).some(arr => arr.length > 0)
+  }
+
   const calculateSplits = async () => {
-    console.log(bill)
     const validPeople = people.filter(p => p.trim() !== '')
     if (validPeople.length === 0) {
       alert('Please add at least one person')
@@ -68,10 +75,11 @@ function ItemAssignment({ bill, billId, onComplete }) {
     try {
       const response = await api.post(`/bills/${billId}/assign`, {
         assignments: assignmentData,
-        people: validPeople
+        people: validPeople,
+        tip: bill.tip // Pass the tip from the bill prop
       })
       
-      setSplits(response.data.splits)
+      setSplits(response.data)
     } catch (error) {
       console.error('Failed to calculate splits:', error)
       alert('Failed to calculate splits. Please try again.')
@@ -98,12 +106,13 @@ function ItemAssignment({ bill, billId, onComplete }) {
               value={person}
               onChange={(e) => updatePerson(index, e.target.value)}
               placeholder="Person name"
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              disabled={index === 0}
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
             />
-            {people.length > 1 && (
+            {index > 0 && (
               <button
                 onClick={() => removePerson(index)}
-                className="px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+                className="px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:opacity-50"
               >
                 Remove
               </button>
@@ -172,10 +181,15 @@ function ItemAssignment({ bill, billId, onComplete }) {
         <div className="bg-white rounded-lg shadow-md p-6">
           <h3 className="text-lg font-semibold mb-4">Calculated Splits</h3>
           <div className="space-y-2">
-            {Object.entries(splits).map(([person, amount]) => (
-              <div key={person} className="flex justify-between">
+            {Object.entries(splits).map(([person, details]) => (
+              <div key={person} className="flex justify-between items-center py-2 border-b last:border-b-0">
                 <span>{person}</span>
-                <span className="font-medium">${amount.toFixed(2)}</span>
+                <div className="text-right">
+                  <span className="font-bold text-lg">${details.total_due.toFixed(2)}</span>
+                  <div className="text-xs text-gray-500">
+                    (${details.item_total.toFixed(2)} items + ${details.tax_share.toFixed(2)} tax + ${details.tip_share.toFixed(2)} tip)
+                  </div>
+                </div>
               </div>
             ))}
           </div>
