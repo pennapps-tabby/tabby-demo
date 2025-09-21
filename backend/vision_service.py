@@ -5,6 +5,7 @@ import google.generativeai as genai
 from dotenv import load_dotenv
 from .utils import extract_json_from_response
 import logging
+import asyncio
 
 load_dotenv()
 logging.basicConfig(level=logging.DEBUG)
@@ -47,8 +48,10 @@ async def parse_receipt(image_path: str) -> dict:
     """
 
     try:
-        # Load and process image
-        image = Image.open(image_path)
+        # Load image in a separate thread to avoid blocking the event loop.
+        # This is crucial for libraries like Pillow that are not async-native.
+        loop = asyncio.get_running_loop()
+        image = await loop.run_in_executor(None, Image.open, image_path)
 
         print("HELLO 2.5")
         # Generate content using Gemini

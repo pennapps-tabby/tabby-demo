@@ -10,6 +10,7 @@ from .utils import (calculate_splits, generate_payment_page_link,
                     generate_qr_code)
 import uuid
 import os
+import aiofiles
 import time
 
 app = FastAPI(title="Bill Splitter API", root_path="/api")
@@ -54,9 +55,9 @@ async def upload_receipt(file: UploadFile = File(...)):
     bill_id = str(uuid.uuid4())
     file_path = os.path.join(UPLOADS_DIR, f"{bill_id}_{file.filename}")
 
-    with open(file_path, "wb") as buffer:
+    async with aiofiles.open(file_path, "wb") as buffer:
         content = await file.read()
-        buffer.write(content)
+        await buffer.write(content)
 
     # Parse with vision AI
     try:
