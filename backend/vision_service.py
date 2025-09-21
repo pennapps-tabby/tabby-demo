@@ -6,7 +6,7 @@ import google.generativeai as genai
 from dotenv import load_dotenv
 import logging
 
-load_dotenv()
+# load_dotenv()
 logging.basicConfig(level=logging.DEBUG)
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
