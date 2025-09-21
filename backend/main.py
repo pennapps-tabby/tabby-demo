@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import FastAPI, UploadFile, File, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 import uvicorn
@@ -8,8 +8,19 @@ from database import init_db, save_bill, get_bill, update_bill
 from utils import calculate_splits, generate_qr_code, generate_payment_page_link
 import uuid
 import os
+import time
 
 app = FastAPI(title="Bill Splitter API", root_path="/api")
+
+# Debugging Middleware: Log every request path and response status
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    start_time = time.time()
+    print(f"--> Request received for path: {request.url.path}")
+    response = await call_next(request)
+    process_time = time.time() - start_time
+    print(f"<-- Responded with status: {response.status_code} in {process_time:.4f}s")
+    return response
 
 # CORS for development
 app.add_middleware(
@@ -32,7 +43,7 @@ async def startup():
     # configure_gemini()
 
 
-@app.post("/api/upload-receipt")
+@app.post("/upload-receipt")
 async def upload_receipt(file: UploadFile = File(...)):
     print("HELLO")
     if not file.content_type.startswith("image/"):
@@ -68,7 +79,7 @@ async def upload_receipt(file: UploadFile = File(...)):
         raise HTTPException(500, f"Failed to parse receipt: {str(e)}")
 
 
-@app.post("/api/bills/{bill_id}/assign")
+@app.post("/bills/{bill_id}/assign")
 async def assign_items(bill_id: str, assignment: AssignmentRequest):
     # Process item assignments and calculate splits
     bill = get_bill(bill_id)
@@ -92,7 +103,7 @@ async def assign_items(bill_id: str, assignment: AssignmentRequest):
     return splits
 
 
-@app.get("/api/bills/{bill_id}")
+@app.get("/bills/{bill_id}")
 async def get_bill_data(bill_id: str):
     """Get bill data by ID"""
     bill = get_bill(bill_id)
@@ -101,7 +112,7 @@ async def get_bill_data(bill_id: str):
     return bill
 
 
-@app.post("/api/bills/{bill_id}/toggle-paid")
+@app.post("/bills/{bill_id}/toggle-paid")
 async def toggle_paid_status(bill_id: str, request: TogglePaidRequest):
     """Toggle the paid status for a person."""
     bill = get_bill(bill_id)
@@ -121,7 +132,7 @@ async def toggle_paid_status(bill_id: str, request: TogglePaidRequest):
     return splits
 
 
-@app.get("/api/bills/{bill_id}/payment-links")
+@app.get("/bills/{bill_id}/payment-links")
 async def generate_payment_links(bill_id: str, organizer_venmo: str, organizer_name: str = "Me"):
     """Generate payment links for each person"""
     bill = get_bill(bill_id)
@@ -165,7 +176,7 @@ async def generate_payment_links(bill_id: str, organizer_venmo: str, organizer_n
     return {"payment_links": links, "outstanding_amount": outstanding_amount, "my_total": my_total}
 
 
-@app.get("/api/health")
+@app.get("/health")
 async def health_check():
     return {"status": "healthy"}
 
