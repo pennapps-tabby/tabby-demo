@@ -119,6 +119,38 @@ npm run dev
 
 The app will be available at `http://localhost:5173`
 
+## Deployment
+
+You can deploy this application for free using Vercel (for the frontend) and Render (for the backend).
+
+### Backend Deployment (Render)
+
+1.  **Create a new Web Service** on Render and connect your GitHub repository.
+2.  **Settings**:
+    - **Name**: `tabby-backend` (or your choice)
+    - **Root Directory**: `backend`
+    - **Environment**: `Python 3`
+    - **Region**: Choose a region close to you.
+    - **Build Command**: `pip install -r requirements.txt`
+    - **Start Command**: `uvicorn main:app --host 0.0.0.0 --port $PORT`
+    - **Instance Type**: `Free`
+3.  **Add Environment Variables**:
+    - `GEMINI_API_KEY`: Your Google Gemini API key.
+    - `FRONTEND_URL`: The URL of your deployed frontend (e.g., `https://your-app.vercel.app`).
+    - `PYTHON_VERSION`: `3.9`
+4.  Click **Create Web Service**. After the first build, your API will be live.
+
+### Frontend Deployment (Vercel)
+
+1.  **Create a new Project** on Vercel and import your GitHub repository.
+2.  Vercel will automatically detect the framework as Vite.
+3.  **Configure Project**:
+    - Expand the **Environment Variables** section.
+    - Add `VITE_API_BASE_URL` and set its value to your Render backend URL (e.g., `https://tabby-backend.onrender.com`).
+4.  Click **Deploy**. Your site will be live in a few moments.
+
+The `vercel.json` file included in the frontend directory ensures that client-side routing works correctly on Vercel.
+
 ## API Endpoints
 
 - `POST /api/upload-receipt` - Upload and parse a receipt image

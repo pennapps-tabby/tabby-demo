@@ -71,6 +71,15 @@ function ReviewReceipt({ bill, onContinue }) {
     const newItems = editableBill.items.filter((_, i) => i !== index)
     setEditableBill(prev => ({ ...prev, items: newItems }))
   }
+
+  const handleContinue = () => {
+    const filteredBill = {
+      ...editableBill,
+      items: editableBill.items.filter(item => item.price > 0)
+    };
+    onContinue(filteredBill);
+  }
+
   return (
     <div className="space-y-6">
       <div className="bg-white rounded-lg shadow-md p-6">
@@ -167,7 +176,7 @@ function ReviewReceipt({ bill, onContinue }) {
       </div>
 
       <button
-        onClick={() => onContinue(editableBill)}
+        onClick={handleContinue}
         className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition-colors"
       >
         Continue to Assign Items

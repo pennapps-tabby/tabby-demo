@@ -198,7 +198,30 @@ Pay here: ${payment_page_link}`;
           </div>
         </div>
       )}
+
+      {linksGenerated && billDetails?.assignments_detail && (
+        <div className="bg-white p-6 rounded-lg shadow-md mt-4">
+          <h3 className="text-xl font-semibold mb-4">Item Assignments</h3>
+          <div className="space-y-3">
+            {billDetails.items.map((item, index) => {
+              const assignments = billDetails.assignments_detail.find(a => a.item_id === index);
+              const assignedPeople = assignments ? assignments.assigned_to.join(', ') : 'Unassigned';
+              return (
+                <div key={index} className="flex justify-between items-center border-b pb-2">
+                  <div>
+                    <p className="font-medium">{item.name}</p>
+                    <p className="text-sm text-gray-500">{assignedPeople}</p>
+                  </div>
+                  <span className="font-mono">${item.price.toFixed(2)}</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
     </div>
+
   )
 }
 

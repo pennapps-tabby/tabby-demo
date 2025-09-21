@@ -4,7 +4,7 @@ from fastapi.staticfiles import StaticFiles
 import uvicorn
 from vision_service import parse_receipt, configure_gemini
 from models import BillResponse, AssignmentRequest, PaymentLinksResponse, TogglePaidRequest
-from database import init_db, save_bill, get_bill, update_bill_splits
+from database import init_db, save_bill, get_bill, update_bill
 from utils import calculate_splits, generate_qr_code, generate_payment_page_link
 import uuid
 import os
@@ -81,9 +81,12 @@ async def assign_items(bill_id: str, assignment: AssignmentRequest):
     # Calculate per-person totals
     splits = calculate_splits(bill, assignment.assignments, assignment.people)
 
-    # Save splits to database
-    update_bill_splits(bill_id, splits)
+    # Update the bill object in memory
+    bill['splits'] = splits
+    bill['assignments_detail'] = [a.dict() for a in assignment.assignments]
 
+    # Save the entire updated bill object
+    update_bill(bill_id, bill)
     return splits
 
 
@@ -111,7 +114,7 @@ async def toggle_paid_status(bill_id: str, request: TogglePaidRequest):
     # Toggle the 'paid' status
     splits[request.person]['paid'] = not splits[request.person].get(
         'paid', False)
-    update_bill_splits(bill_id, splits)
+    update_bill(bill_id, bill)
 
     return splits
 

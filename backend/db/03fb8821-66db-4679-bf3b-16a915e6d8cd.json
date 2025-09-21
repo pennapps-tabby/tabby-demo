@@ -1,0 +1,179 @@
+{
+  "restaurant_name": "Oishi Japanese Sushi Bar&Grill",
+  "items": [
+    {
+      "name": "Sashimi Sake (Salmon)",
+      "price": 4.0
+    },
+    {
+      "name": "Agedashi Tofu",
+      "price": 5.0
+    },
+    {
+      "name": "Green Tea",
+      "price": 2.25
+    },
+    {
+      "name": "Gekkeikan Hot Sake (L)",
+      "price": 9.0
+    },
+    {
+      "name": "Hero Roll",
+      "price": 8.5
+    },
+    {
+      "name": "Spicy",
+      "price": 0.0
+    },
+    {
+      "name": "New York",
+      "price": 6.5
+    },
+    {
+      "name": "Dynamite Sushi Roll",
+      "price": 9.5
+    },
+    {
+      "name": "Samurai Roll",
+      "price": 11.5
+    },
+    {
+      "name": "Unagi Roll",
+      "price": 8.75
+    },
+    {
+      "name": "Add Cream Cheese",
+      "price": 0.0
+    },
+    {
+      "name": "Yellowtail Hand Roll",
+      "price": 4.0
+    },
+    {
+      "name": "Spicy",
+      "price": 0.0
+    },
+    {
+      "name": "Gyoza (6)",
+      "price": 5.0
+    }
+  ],
+  "subtotal": 74.0,
+  "tax": 7.03,
+  "tip": 0.0,
+  "total": 81.03,
+  "image_path": "uploads/03fb8821-66db-4679-bf3b-16a915e6d8cd_rb27-menu-Oishi-Japanese-Sushi-Bar-and-Grill-2022-10-8.jpg",
+  "splits": {
+    "Me": {
+      "item_total": 21.666666666666668,
+      "tax_share": 2.3433333333333337,
+      "tip_share": 0.0,
+      "paid": false,
+      "total_due": 24.01
+    },
+    "joe": {
+      "item_total": 21.666666666666668,
+      "tax_share": 2.3433333333333337,
+      "tip_share": 0.0,
+      "paid": false,
+      "total_due": 24.01
+    },
+    "doug": {
+      "item_total": 21.666666666666668,
+      "tax_share": 2.3433333333333337,
+      "tip_share": 0.0,
+      "paid": false,
+      "total_due": 24.01
+    }
+  },
+  "assignments_detail": [
+    {
+      "item_id": 0,
+      "assigned_to": [
+        "Me",
+        "joe",
+        "doug"
+      ]
+    },
+    {
+      "item_id": 1,
+      "assigned_to": [
+        "Me",
+        "joe",
+        "doug"
+      ]
+    },
+    {
+      "item_id": 2,
+      "assigned_to": [
+        "Me",
+        "joe",
+        "doug"
+      ]
+    },
+    {
+      "item_id": 3,
+      "assigned_to": [
+        "Me",
+        "joe",
+        "doug"
+      ]
+    },
+    {
+      "item_id": 4,
+      "assigned_to": [
+        "Me",
+        "joe",
+        "doug"
+      ]
+    },
+    {
+      "item_id": 5,
+      "assigned_to": [
+        "Me",
+        "joe",
+        "doug"
+      ]
+    },
+    {
+      "item_id": 6,
+      "assigned_to": [
+        "Me",
+        "joe",
+        "doug"
+      ]
+    },
+    {
+      "item_id": 7,
+      "assigned_to": [
+        "Me",
+        "joe",
+        "doug"
+      ]
+    },
+    {
+      "item_id": 8,
+      "assigned_to": [
+        "Me",
+        "joe",
+        "doug"
+      ]
+    },
+    {
+      "item_id": 9,
+      "assigned_to": [
+        "Me",
+        "joe",
+        "doug"
+      ]
+    },
+    {
+      "item_id": 10,
+      "assigned_to": [
+        "Me",
+        "joe",
+        "doug"
+      ]
+    }
+  ]
+}
