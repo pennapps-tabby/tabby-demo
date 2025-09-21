@@ -75,7 +75,7 @@ function ReviewReceipt({ bill, onContinue }) {
   const handleContinue = () => {
     const filteredBill = {
       ...editableBill,
-      items: editableBill.items.filter(item => item.price > 0)
+      items: editableBill.items.filter(item => item.price != 0)
     };
     onContinue(filteredBill);
   }
